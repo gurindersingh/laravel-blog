@@ -13,7 +13,7 @@ class TaxonomiesController extends Controller
     public function index($type = null)
     {
         if (!authUserHasPermission('manage-taxonomies')) {
-            abort(403);
+            abort(403, "User does not have permissions to manage taxonomies");
         };
 
         $categories = Category::whereParentId(null)->with('children')->get();
