@@ -1,0 +1,122 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateBlogTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('short_url')->unique()->nullable();
+            $table->string('post_type')->default('post');
+            $table->string('slug')->unique();
+            $table->string('title');
+            $table->text('body')->nullable();
+            $table->text('excerpt')->nullable();
+            $table->string('estimate_reading_time')->nullable();
+            $table->mediumText('table_of_content')->nullable();
+            $table->unsignedInteger('category_id')->nullable();
+            $table->json('meta')->nullable();
+            $table->unsignedInteger('featured_image_id')->nullable();
+            $table->timestamp('published_at')->nullable();
+            $table->timestamps();
+
+            $table->unsignedInteger('author_id');
+            $table->foreign('author_id')->references('id')->on('users');
+        });
+
+        Schema::create('categories', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('slug')->unique();
+            $table->string('label', 255);
+            $table->text('description')->nullable();
+            $table->integer('parent_id')->nullable();
+        });
+
+        Schema::table('posts', function (Blueprint $table) {
+            $table->foreign('category_id')->references('id')->on('categories');
+        });
+
+        Schema::create('tags', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('slug')->unique();
+            $table->string('label', 255);
+            $table->text('description')->nullable();
+        });
+
+        Schema::create('post_tag', function (Blueprint $table) {
+            $table->unsignedInteger('tag_id');
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
+
+            $table->unsignedInteger('post_id');
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+        });
+
+        Schema::create('media', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('extension', 32);
+            $table->boolean('public')->default(true);
+            $table->string('mime_type', 128); // image/jpg, image/png
+            $table->string('file_type', 128); // image , video, document
+            $table->json('variations');
+            $table->json('properties')->nullable();
+            $table->string('storage_disk');
+            $table->string('storage_bucket')->nullable();
+            $table->unsignedInteger('uploaded_by');
+            $table->foreign('uploaded_by')->references('id')->on('users');
+            $table->unsignedInteger('mediaable_id')->nullable();
+            $table->string('mediaable_type')->nullable();
+            $table->boolean('uploaded')->default(false);
+            $table->timestamps();
+        });
+
+        Schema::table('posts', function (Blueprint $table) {
+            $table->foreign('featured_image_id')
+                ->references('id')
+                ->on('media');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropForeign(['featured_image_id']);
+        });
+
+        Schema::dropIfExists('media');
+
+        Schema::disableForeignKeyConstraints();
+
+        Schema::table('post_tag', function (Blueprint $table) {
+            $table->dropForeign(['tag_id']);
+            $table->dropForeign(['post_id']);
+        });
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropForeign(['category_id']);
+        });
+        Schema::dropIfExists('post_tag');
+        Schema::dropIfExists('tags');
+        Schema::dropIfExists('categories');
+
+        Schema::enableForeignKeyConstraints();
+
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropForeign(['author_id']);
+        });
+        Schema::dropIfExists('posts');
+
+    }
+}

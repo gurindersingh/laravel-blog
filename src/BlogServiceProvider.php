@@ -11,7 +11,14 @@ class BlogServiceProvider extends ServiceProvider
     {
         $this->publishes([__DIR__ . '/config/gblog.php' => config_path('gblog.php')], 'gblog::config');
 
-        $this->registerMigrations();
+        if (!class_exists('CreateBlogTables')) {
+
+            $timestamp = date('Y_m_d_His', time());
+
+            $this->publishes([
+                __DIR__ . "/Database/migrations/create_blog_tables.php.stub" => $this->app->databasePath() . "/migrations/{$timestamp}_create_blog_tables.php",
+            ], 'gblog::migrations');
+        }
 
         $this->loadRoutesFrom(__DIR__ . '/Routes/web.php');
 
@@ -24,24 +31,9 @@ class BlogServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/Config/gblog.php', 'gblog');
 
-        // Bind breadcrumbs package
         $this->app->register(
             'Superbalist\LaravelGoogleCloudStorage\GoogleCloudStorageServiceProvider'
         );
 
-    }
-
-    protected function registerMigrations()
-    {
-        if (!class_exists('CreatePostsTables')) {
-
-            $timestamp = date('Y_m_d_His', time());
-
-            $from = __DIR__ . "/Database/migrations/create_posts_tables.php.stub";
-
-            $to = "{$this->app->databasePath()}/migrations/{$timestamp}_create_posts_tables.php";
-
-            $this->publishes([$from => $to], 'gblog::migrations');
-        }
     }
 }
