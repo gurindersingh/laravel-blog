@@ -1,0 +1,1 @@
+@include('gblog::posts._manage-post')
