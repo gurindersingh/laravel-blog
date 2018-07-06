@@ -124,7 +124,7 @@
             },
 
             taxonomyUpdated(data) {
-                console.log(data);
+
                 if (data.taxonomy_type === 'tag') {
                     this.tags = data.all_taxonomies;
                     this.$emit('select-tab', 1);
