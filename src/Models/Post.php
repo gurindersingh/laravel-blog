@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-
     use UrlShortner;
 
     protected $guarded = [];
@@ -70,6 +69,11 @@ class Post extends Model
         return $query->where('post_type', 'page');
     }
 
+    public function scopeOfUser($query, $userId)
+    {
+        return $query->whereAuthorId($userId);
+    }
+
     public function scopePost($query)
     {
         return $query->where('post_type', 'post');
@@ -90,9 +94,9 @@ class Post extends Model
         return $this->published_at == null;
     }
 
-    public function editLink($user)
+    public function editLink()
     {
-        return route('admin.posts.edit', [$user->username, $this->id]);
+        return route('admin.posts.edit', $this->id);
     }
 
     public function owns($user)

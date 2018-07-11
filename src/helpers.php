@@ -67,9 +67,7 @@ if (!function_exists('getUploadedFileInstance')) {
 
         $error = null;
 
-        $test = $public;
-
-        return new \Illuminate\Http\UploadedFile($path, $originalName, $mimeType, $size, $error, $test);
+        return new \Illuminate\Http\UploadedFile($path, $originalName, $mimeType, $size, $error, $public);
     }
 }
 

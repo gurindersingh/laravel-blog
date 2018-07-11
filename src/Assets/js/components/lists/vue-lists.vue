@@ -7,7 +7,7 @@
                    class="h6">{{ listItem.label }}</a>
 
                 <div class="" v-if="selectable">
-                    <label :for="name + '-' + listItem.id" class="toggle label mr-3">
+                    <label :for="name + '-' + listItem.id" class="toggle mr-3">
                         <input :type="inputType"
                                :name="name"
                                :value="listItem.id"

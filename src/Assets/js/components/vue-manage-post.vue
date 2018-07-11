@@ -9,7 +9,8 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="d-f jc-sb ai-c mt-5">
-                    <h1 class="h5 tt-u text-uppercase" v-text="isPost ? 'Create Post' : 'Create Page'"></h1>
+                    <h1 class="h5 tt-u text-uppercase"
+                        v-text="isPost ? 'Create ' + dataPostType : 'Create ' + dataPostType"></h1>
                     <div class="d-f jc-sb">
                         <button type="button"
                                 v-text="post.id ? 'Update' : 'Save'"
@@ -83,7 +84,8 @@
 
                     <div class="col-lg-12 mb-4">
                         <label for="title" class="label">Title</label>
-                        <input id="title" type="text" class="form-control" name="title" v-model="post.title">
+                        <input id="title" type="text" class="form-control" name="title" v-model="post.title"
+                               placeholder="Title...">
                     </div>
 
                     <div class="col-lg-12 mb-4">
@@ -189,7 +191,7 @@
 
                     <div class="col-lg-12 mtb-4">
                         <h3 class="label"
-                            v-text="isPost ? 'Post Featured Image' : 'Page Featured Image'">Featured Image</h3>
+                            v-text="isPost ? dataPostType + ' Featured Image' : dataPostType + ' Featured Image'"></h3>
                         <vue-image-selector name="featured_image"
                                             :src="featuredImageUrl"
                                             class="bd"
@@ -337,10 +339,7 @@
 
                         let url = this.postEditUrl.replace('%post%', this.post.id);
 
-                        history.pushState({id: 'post-edit-' + res.id}, null, url);
-
-                        this.processing = false;
-
+                        window.location.href = url;
                     })
                     .catch(err => {
                         console.log(err);
@@ -366,19 +365,23 @@
             },
 
             destroy() {
-                this.processing = true;
+                this.$confirm("Are You Sure You Want To Delete")
+                    .then(res => {
+                        this.processing = true;
 
-                window.axios
-                    .delete(
-                        `${this.postRestUrl}/${this.post.id}`,
-                        {
-                            data: {
-                                id: this.post.id
-                            }
-                        }
-                    )
-                    .then(res => window.location.href = this.postRestUrl)
-                    .catch(err => console.log(err))
+                        window.axios
+                            .delete(
+                                `${this.postRestUrl}/${this.post.id}`,
+                                {
+                                    data: {
+                                        id: this.post.id
+                                    }
+                                }
+                            )
+                            .then(res => window.location.href = this.postRestUrl)
+                            .catch(err => console.log(err))
+                    })
+                    .catch(err => console.log(err));
             },
 
             updateData(post) {

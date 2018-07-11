@@ -27,6 +27,7 @@
     "illuminate/validation": "^5.6",
     "illuminate/view": "^5.6",
     "illuminate/cache": "^5.6",
+    "hashids/hashids": "^3.0",
     "superbalist/laravel-google-cloud-storage": "^2.0",
     "intervention/image": "^2.4"
   },

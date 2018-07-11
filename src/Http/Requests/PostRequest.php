@@ -3,6 +3,7 @@
 namespace Gurinder\LaravelBlog\Http\Requests;
 
 
+use Gurinder\LaravelBlog\Models\Media;
 use Gurinder\LaravelBlog\Models\Post;
 use Gurinder\LaravelBlog\Rules\ValidCategoryId;
 use Illuminate\Foundation\Http\FormRequest;
@@ -154,6 +155,7 @@ class PostRequest extends FormRequest
     /**
      * @param Post $post
      * @return bool
+     * @return Media
      */
     protected function uploadFeaturedImage(Post $post)
     {

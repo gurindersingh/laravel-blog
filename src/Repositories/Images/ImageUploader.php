@@ -38,7 +38,7 @@ class ImageUploader
 
     protected $post;
 
-    public function __construct(UploadedFile $uploadedImage = null, $modelSlug = null, $variations = null, Post $post = null)
+    public function __construct(UploadedFile $uploadedImage = null, $modelSlug = null, $variations = null, $post = null)
     {
         $this->disk = Storage::disk(config('media.disk'));
         $this->uploadedImage = $uploadedImage;

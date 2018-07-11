@@ -49,7 +49,6 @@
 				</div>
 			</div>
 			
-			
 			<div class="col-lg-4 mb-4">
 				<div class="card shadow hv:shadow-lg">
 					<div class="card-body">
