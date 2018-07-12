@@ -11,6 +11,10 @@ class BlogServiceProvider extends ServiceProvider
     {
         $this->publishes([__DIR__ . '/config/gblog.php' => config_path('gblog.php')], 'gblog::config');
 
+        $this->publishes([
+            __DIR__.'/assets' => $this->app->resourcePath('assets/vendor/gblog'),
+        ], 'gblog::scripts');
+
         if (!class_exists('CreateBlogTables')) {
 
             $timestamp = date('Y_m_d_His', time());
