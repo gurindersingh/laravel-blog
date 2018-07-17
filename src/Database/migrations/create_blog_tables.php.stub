@@ -66,7 +66,7 @@ class CreateBlogTables extends Migration
             $table->boolean('public')->default(true);
             $table->string('mime_type', 128); // image/jpg, image/png
             $table->string('file_type', 128); // image , video, document
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->json('variations');
             $table->json('properties')->nullable();
             $table->string('storage_disk');
