@@ -11,7 +11,7 @@ Route::middleware(['web', 'auth'])
         Route::get('/posts/create', 'PostsController@create')->name('posts.create');
         Route::resource('/taxonomies', 'TaxonomiesController');
         Route::resource('/posts', 'PostsController');
-        Route::resource('/pages', 'PagesController');
+        Route::resource('/pages', 'PagesController')->only(['index', 'create', 'edit']);
 
         Route::resource('/tags', 'TagsController')->only(['index', 'store', 'destroy']);
 

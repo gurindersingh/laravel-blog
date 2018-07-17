@@ -2,8 +2,8 @@
 
 namespace Gurinder\LaravelBlog\Http\Controllers;
 
-use Gurinder\LaravelBlog\Models\Tag;
 use Illuminate\Http\Request;
+use Gurinder\LaravelBlog\Models\Tag;
 use Gurinder\LaravelBlog\Models\Post;
 use Gurinder\LaravelBlog\Models\Category;
 use Gurinder\LaravelBlog\Http\Requests\PostRequest;
@@ -13,7 +13,7 @@ class PostsController extends Controller
 
     public function index()
     {
-        $posts = Post::with(['featuredImage', 'category', 'tags', 'author'])->paginate(20);
+        $posts = Post::post()->with(['featuredImage', 'category', 'tags', 'author'])->paginate(20);
 
         return view('gblog::posts.index', compact('posts'));
     }

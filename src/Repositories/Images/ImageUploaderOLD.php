@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 
-class ImageUploader
+class ImageUploaderOLD
 {
     protected $disk;
 

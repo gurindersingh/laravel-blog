@@ -49,9 +49,9 @@ class Media extends Model
     /**
      * @return string
      */
-    public function getNameAttribute()
+    public function getFullNameAttribute()
     {
-        return "{$this->slug}.{$this->extension}";
+        return "{$this->name}.{$this->extension}";
     }
 
 }
