@@ -93,13 +93,13 @@ class CreateBlogTables extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
+
         Schema::table('posts', function (Blueprint $table) {
             $table->dropForeign(['featured_image_id']);
         });
 
         Schema::dropIfExists('media');
-
-        Schema::disableForeignKeyConstraints();
 
         Schema::table('post_tag', function (Blueprint $table) {
             $table->dropForeign(['tag_id']);
@@ -112,12 +112,12 @@ class CreateBlogTables extends Migration
         Schema::dropIfExists('tags');
         Schema::dropIfExists('categories');
 
-        Schema::enableForeignKeyConstraints();
-
         Schema::table('posts', function (Blueprint $table) {
             $table->dropForeign(['author_id']);
         });
         Schema::dropIfExists('posts');
+
+        Schema::enableForeignKeyConstraints();
 
     }
 }

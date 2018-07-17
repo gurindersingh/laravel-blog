@@ -1,10 +1,10 @@
 <?php
 
-namespace Gurinder\LaravelBlog\Repositories\Images;
+namespace Gurinder\LaravelBlog\Repositories;
 
 
-use Gurinder\Storage\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Gurinder\Storage\Facades\Storage;
 
 class ImageManager
 {
@@ -17,9 +17,9 @@ class ImageManager
      * @param bool                  $public
      * @return array
      */
-    public function upload($disk = 'local', $image, $path = '/images', $variations = [], $public = false)
+    public function upload($disk = 'local', $image, $variations = [], $public = false, $path = 'images')
     {
-        return Storage::uploadImage($disk, $image, $path, $variations, $public);
+        return Storage::uploadImage($disk, $image, $variations, $public, $path);
     }
 
     /**

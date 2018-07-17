@@ -2,10 +2,13 @@
 
 namespace Gurinder\LaravelBlog\Http\Controllers;
 
+use Gurinder\LaravelBlog\Repositories\PostRepository;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Gurinder\LaravelBlog\Models\Post;
 use Gurinder\LaravelBlog\Models\Media;
-use Gurinder\LaravelBlog\Repositories\Images\ImageUploader;
+use Gurinder\LaravelBlog\Repositories\ImageManager;
+use Gurinder\LaravelBlog\Repositories\MediaRepository;
 
 class PostsContentImagesController extends Controller
 {
@@ -32,16 +35,18 @@ class PostsContentImagesController extends Controller
         $post = Post::whereId($id)->where('author_id', auth()->id())->firstOrFail();
 
         try {
-            if ($media = $this->uploadImage($request, $post)) {
+            if ($media = (new PostRepository($post))->uploadImageAndCreateMedia($request->file, [], true)) {
                 return response()->json([
                     'files' => [
                         [
-                            'url'   => $media->variations['original']['url'],
+                            'url'   => storageUrl($media->variations['original']['path']),
                             'media' => $media
                         ]
                     ]
-                ]);
+                ], 200);
             }
+
+            return response("Error", 500);
         } catch (\Exception $e) {
             return response("Something went wrong", 500);
         }
@@ -57,32 +62,35 @@ class PostsContentImagesController extends Controller
     {
         $request->validate(['file' => 'required|string']);
 
-        $media = Media::where('variations->original->url', $request->file)->firstOrFail();
-
-        if ($media->delete()) {
-
-            $disk = \Storage::disk(config('media.disk'));
-
-            foreach ($media->variations as $variation) {
-
-                $disk->delete($variation['path']);
-
-            }
-
+        if ((new MediaRepository())->deleteByVariationPath($request->file)) {
             return response("Media deleted", 202);
         }
+
+        // $path = str_replace(config('media.cloud_url_prefix'), '', $request->file);
+        //
+        // $media = Media::where('variations->original->path', ltrim($path, '/'))->firstOrFail();
+        //
+        // $paths = collect($media->variations)->pluck('path')->all();
+        //
+        // if ($media->delete()) {
+        //
+        //     (new ImageManager)->remove($media->storage_disk, $paths);
+        //
+        //     return response("Media deleted", 202);
+        // }
 
         return response("Error", 500);
     }
 
-    /**
-     * @param Request $request
-     * @param         $post
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    protected function uploadImage(Request $request, $post): \Illuminate\Database\Eloquent\Model
-    {
-        return (new ImageUploader($request->file, $post->slug, null, $post))->setOnlyOriginal(true)->upload();
-    }
+    // /**
+    //  * @param string | UploadedFile $file
+    //  * @return array
+    //  */
+    // protected function uploadImageAndCreateMedia($file)
+    // {
+    //     $data = (new ImageManager())->upload(config('media.disk'), $file, 'images', [], true);
+    //
+    //     return (new MediaRepository())->create($data);
+    // }
 
 }

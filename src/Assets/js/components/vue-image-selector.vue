@@ -58,7 +58,7 @@
         mounted() {
 
             this.$watch('src', (val, oldVal) => {
-                if(val) this.image = null;
+                if (val) this.image = null;
             });
 
         },

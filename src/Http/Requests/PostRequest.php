@@ -4,12 +4,10 @@ namespace Gurinder\LaravelBlog\Http\Requests;
 
 
 use Gurinder\LaravelBlog\Models\Post;
-use Gurinder\LaravelBlog\Models\Media;
-use Gurinder\LaravelBlog\Repositories\Images\ImageManager;
 use Illuminate\Foundation\Http\FormRequest;
 use Gurinder\LaravelBlog\Rules\ValidPostSlug;
 use Gurinder\LaravelBlog\Rules\ValidCategoryId;
-use Gurinder\Storage\Facades\Storage as GStorage;
+use Gurinder\LaravelBlog\Repositories\PostRepository;
 use Gurinder\LaravelBlog\Rules\ValidBase64ImageString;
 use Gurinder\LaravelBlog\Rules\ValidAndUniquePostSlug;
 
@@ -104,11 +102,11 @@ class PostRequest extends FormRequest
             ]
         ]);
 
-
-        if ($media = $this->uploadFeaturedImage($post)) {
-            $post->media()->save($media);
-            $post->update(['featured_image_id' => $media->id]);
-        }
+        (new PostRepository($post))->saveFeaturedImageOfThePost(
+            $this->featured_image_raw,
+            config('media.image_variations'),
+            true
+        );
 
         $this->syncTags($post);
 
@@ -140,11 +138,11 @@ class PostRequest extends FormRequest
         ];
 
         if (is_string($this->featured_image_raw) && !empty(trim($this->featured_image_raw))) {
-            $this->updateFeaturedImage($post);
-            // if ($media = $this->updateFeaturedImage($post)) {
-            //     $post->media()->save($media);
-            //     $data = $data + ['featured_image_id' => $media->id];
-            // }
+            (new PostRepository($post))->updateFeaturedImageOfThePost(
+                $this->featured_image_raw,
+                config('media.image_variations'),
+                true
+            );
         }
 
         $this->syncTags($post);
@@ -154,52 +152,6 @@ class PostRequest extends FormRequest
         return $post->fresh(['featuredImage', 'category', 'tags']);
     }
 
-    /**
-     * @param Post $post
-     * @return bool
-     * @return Media
-     */
-    protected function uploadFeaturedImage(Post $post)
-    {
-        $variations = config('media.image_variations');
-
-        $imageData = GStorage::uploadImage(config('media.disk'), $this->featured_image_raw, '/images', $variations, true);
-
-        return $this->createMedia($imageData);
-    }
-
-    /**
-     * @param Post $post
-     * @return void
-     */
-    protected function updateFeaturedImage(Post $post)
-    {
-        if ($post->featuredImage) {
-            (new ImageManager)->remove(
-                $post->featuredImage->storage_disk,
-                collect($post->featuredImage->variations)->pluck('path')->toArray()
-            );
-        }
-
-        $imageData = (new ImageManager)->upload(
-            config('media.disk'),
-            $this->featured_image_raw,
-            '/images',
-            config('media.image_variations'),
-            true
-        );
-
-        $post->featuredImage->update([
-            'name'        => $imageData['name'],
-            'extension'   => $imageData['extension'],
-            'mime_type'   => $imageData['mime_type'],
-            'file_type'   => $imageData['file_type'],
-            'public'      => $imageData['public'],
-            'variations'  => $imageData['variations'],
-            'uploaded_by' => auth()->id()
-        ]);
-
-    }
 
     /**
      * @param $post
@@ -213,24 +165,5 @@ class PostRequest extends FormRequest
             $post->tags()->sync($tagIds);
 
         }
-    }
-
-    protected function createMedia($data)
-    {
-        return Media::create([
-            'name'         => $data['name'],
-            'extension'    => $data['extension'],
-            'mime_type'    => $data['mime_type'],
-            'file_type'    => $data['file_type'],
-            'public'       => $data['public'],
-            'variations'   => $data['variations'],
-            'properties'   => [
-                'alt_text'    => null,
-                'caption'     => null,
-                'description' => null,
-            ],
-            'storage_disk' => $data['storage_disk'],
-            'uploaded_by'  => auth()->id(),
-        ]);
     }
 }

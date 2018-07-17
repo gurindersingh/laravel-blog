@@ -286,8 +286,10 @@
 
             featuredImageUrl() {
                 if (this.post.featured_image_id !== null) {
-                    if (Utils.objHasKey(this.post, 'featured_image.variations.thumbnail.url')) {
-                        return this.post.featured_image.variations.thumbnail.url;
+                    if (Utils.objHasKey(this.post, 'featured_image.variations.thumbnail.path')) {
+                        let path = this.post.featured_image.variations.thumbnail.path;
+                        let prefix = window.App.cloud_url_prefix;
+                        return `${prefix}/${path}`;
                     }
                 }
                 return null;
