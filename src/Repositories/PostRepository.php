@@ -5,6 +5,7 @@ namespace Gurinder\LaravelBlog\Repositories;
 
 use Gurinder\LaravelBlog\Models\Media;
 use Illuminate\Database\Eloquent\Model;
+use Gurinder\Storage\Facades\Storage as GurinderStorage;
 
 class PostRepository
 {
@@ -34,9 +35,11 @@ class PostRepository
      * @param        $public
      * @return bool
      */
-    public function saveFeaturedImageOfThePost($image, $variations = [], $public, $path = 'images')
+    public function saveFeaturedImageOfThePost($image, $public = false)
     {
-        $imageData = $this->uploadImage($image, $variations, $public, $path);
+        $variations = config('media.image_variations');
+
+        $imageData = GurinderStorage::setPublic($public)->uploadImage($image);
 
         $media = (new MediaRepository())->create($imageData);
 
@@ -52,16 +55,23 @@ class PostRepository
      * @param bool  $public
      * @return bool
      */
-    public function updateFeaturedImageOfThePost($image, $variations = [], $public = false, $path = 'images')
+    public function updateFeaturedImageOfThePost($image, $public = false)
     {
+        $variations = config('media.image_variations');
+
+        $disk = $this->post->featuredImage->storage_disk;
+
         if ($this->post->featuredImage) {
-            (new ImageManager)->remove(
-                $this->post->featuredImage->storage_disk,
-                collect($this->post->featuredImage->variations)->pluck('path')->all()
+
+            GurinderStorage::removeImages(
+                $disk,
+                collect($this->post->featuredImage->variations)->pluck('path')->all(),
+                $disk == 'local' ? $this->post->featuredImage->public : false
             );
+
         }
 
-        $imageData = $this->uploadImage($image, $variations, $public, $path);
+        $imageData = GurinderStorage::setPublic($public)->uploadImage($image);
 
         (new MediaRepository)->update($this->post->featuredImage, $imageData);
 
@@ -75,9 +85,14 @@ class PostRepository
      * @param string $path
      * @return Media
      */
-    public function uploadImageAndCreateMedia($image, $variations = [], $public = false, $path = 'images')
+    public function uploadImageAndCreateMedia($image, $variations = null, $public = false)
     {
-        $imageData = $this->uploadImage($image, $variations, $public, $path);
+
+        if(is_null($variations)) {
+            $variations = config('media.image_variations');
+        }
+
+        $imageData = GurinderStorage::setVariations($variations)->setPublic($public)->uploadImage($image);
 
         $media = (new MediaRepository())->create($imageData);
 
@@ -93,9 +108,9 @@ class PostRepository
      * @param string $path
      * @return array
      */
-    protected function uploadImage($image, $variations = [], $public = false, $path = 'images')
+    protected function uploadImage($image, $public = false)
     {
-        return (new ImageManager())->upload($this->getDisk(), $image, $variations, $public, $path);
+        return GurinderStorage::uploadImage($image, $public);
     }
 
     /**
@@ -123,11 +138,7 @@ class PostRepository
      */
     public function getDisk()
     {
-        $disk = $this->disk ? $this->disk : config('media.disk');
-
-        $this->disk = $disk;
-
-        return $disk;
+        return config('filesystems.default');
     }
 
 }

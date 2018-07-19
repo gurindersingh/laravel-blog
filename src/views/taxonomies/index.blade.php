@@ -5,7 +5,7 @@
 @section('content')
 	
 	
-	<section class="my-5">
+	<section class="my-10 pb-10">
 		<div class="container">
 			
 			<div class="row">
@@ -16,6 +16,12 @@
 			</div>
 			
 			<div class="row">
+				
+				<div class="col-lg-12 mb-4">
+					<div class="btn-group" role="group" aria-label="Basic example">
+						<a href="{{ route('admin.dashbaord') }}" class="btn py-1 px-2 label btn-outline-primary">Dashboard</a>
+					</div>
+				</div>
 				
 				<div class="col-lg-12">
 					<vue-manage-taxonomies :data-categories="{{ $categories }}"

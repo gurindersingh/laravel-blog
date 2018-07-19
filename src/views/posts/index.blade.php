@@ -15,6 +15,13 @@
 		
 		<div class="row mt-5 mb-10 pb-10">
 			
+			<div class="col-lg-12 mb-4">
+				<div class="btn-group" role="group" aria-label="Basic example">
+					<a href="{{ route('admin.dashbaord') }}" class="btn py-1 px-2 label btn-outline-primary">Dashboard</a>
+					<a href="{{ route('admin.posts.create') }}" class="btn py-1 px-2 label btn-outline-primary">Add Post</a>
+				</div>
+			</div>
+			
 			<div class="col-lg-12">
 				<div class="table-responsive bgc-white">
 					<table class="table table-bordered mb-0">
@@ -34,7 +41,7 @@
 								<td>
 									<div class="d-f ai-fs">
 										{{--<img src="{{ storageUrl($post->featuredImage->variations['thumbnail']['path']) }}"--}}
-										     {{--class="img-thumbnail mr-2" style="width: 60px">--}}
+										{{--class="img-thumbnail mr-2" style="width: 60px">--}}
 										
 										<a href="{{ route('admin.posts.edit', $post->id) }}">
 											<h3 class="h5 fxg-1">{{ $post->title }}</h3>

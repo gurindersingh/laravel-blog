@@ -52,8 +52,9 @@ class PostsContentImagesController extends Controller
     {
 
         if ($media = (new PostRepository($post))->uploadImageAndCreateMedia($image, [], true)) {
+
             return response()->json([
-                'url'   => storageUrl($media->variations['original']['path']),
+                'url'   => $media->image_original_url,
                 'media' => $media
             ], 200);
         }
@@ -78,11 +79,13 @@ class PostsContentImagesController extends Controller
      */
     public function destroy(Request $request)
     {
-        $request->validate(['file' => 'required|string']);
+        // DELETION NEED TO DONE BY BACKEND
 
-        if ((new MediaRepository())->deleteByVariationPath($request->file)) {
-            return response("Media deleted", 202);
-        }
-        return response("Error", 500);
+        // $request->validate(['file' => 'required|string']);
+        //
+        // if ((new MediaRepository())->deleteByVariationPath($request->file)) {
+        //     return response("Media deleted", 202);
+        // }
+        // return response("Error", 500);
     }
 }

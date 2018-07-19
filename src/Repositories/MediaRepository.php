@@ -49,13 +49,14 @@ class MediaRepository
         }
 
         return $media->update([
-            'name'        => $data['name'],
-            'extension'   => $data['extension'],
-            'mime_type'   => $data['mime_type'],
-            'file_type'   => $data['file_type'],
-            'public'      => $data['public'],
-            'variations'  => $data['variations'],
-            'uploaded_by' => auth()->id()
+            'name'         => $data['name'],
+            'extension'    => $data['extension'],
+            'mime_type'    => $data['mime_type'],
+            'file_type'    => $data['file_type'],
+            'public'       => $data['public'],
+            'variations'   => $data['variations'],
+            'storage_disk' => $data['storage_disk'],
+            'uploaded_by'  => auth()->id()
         ]);
     }
 

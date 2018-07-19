@@ -31,7 +31,10 @@ class Media extends Model
     ];
 
     protected $appends = [
-        'thumbnail_url'
+        'image_original_url',
+        'image_thumbnail_url',
+        'image_social_url',
+        'image_hd_url',
     ];
 
     /**
@@ -58,21 +61,38 @@ class Media extends Model
         return "{$this->name}.{$this->extension}";
     }
 
-    public function getThumbnailUrlAttribute()
+    public function getImageOriginalUrlAttribute()
     {
+        return $this->getVariationImagePath('original.path');
+    }
 
+    public function getImageThumbnailUrlAttribute()
+    {
+        return $this->getVariationImagePath('thumbnail.path');
+    }
+
+    public function getImageHdUrlAttribute()
+    {
+        return $this->getVariationImagePath('hd.path');
+    }
+
+    public function getImageSocialUrlAttribute()
+    {
+        return $this->getVariationImagePath('social.path');
+    }
+
+    protected function getVariationImagePath($variation = '')
+    {
         $disk = $this->storage_disk;
 
-        if ($path = optional($this->featuredImage)['variations']['thumbnail']['path']) {
-
+        if ($path = $path = data_get($this->variations, $variation)) {
+            $prefix = null;
             if ($cloudUrlPrefix = config("media.cloud_url.{$disk}")) {
                 $pathPrefix = $prefix ?: trim($cloudUrlPrefix, '/');
                 $path = trim($path, '/');
                 return "{$pathPrefix}/{$path}";
             }
-
         }
-
         return null;
     }
 

@@ -104,7 +104,6 @@ class PostRequest extends FormRequest
 
         (new PostRepository($post))->saveFeaturedImageOfThePost(
             $this->featured_image_raw,
-            config('media.image_variations'),
             true
         );
 
@@ -139,18 +138,10 @@ class PostRequest extends FormRequest
 
         if (is_string($this->featured_image_raw) && !empty(trim($this->featured_image_raw))) {
 
-            if($post->featuredImage) {
-                (new PostRepository($post))->updateFeaturedImageOfThePost(
-                    $this->featured_image_raw,
-                    config('media.image_variations'),
-                    true
-                );
+            if ($post->featuredImage) {
+                (new PostRepository($post))->updateFeaturedImageOfThePost($this->featured_image_raw, true);
             } else {
-                (new PostRepository($post))->saveFeaturedImageOfThePost(
-                    $this->featured_image_raw,
-                    config('media.image_variations'),
-                    true
-                );
+                (new PostRepository($post))->saveFeaturedImageOfThePost($this->featured_image_raw, true);
             }
 
 

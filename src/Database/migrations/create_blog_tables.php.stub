@@ -19,7 +19,7 @@ class CreateBlogTables extends Migration
             $table->string('post_type')->default('post');
             $table->string('slug')->unique();
             $table->string('title');
-            $table->text('body')->nullable();
+            $table->longText('body')->nullable();
             $table->text('excerpt')->nullable();
             $table->string('estimate_reading_time')->nullable();
             $table->mediumText('table_of_content')->nullable();
