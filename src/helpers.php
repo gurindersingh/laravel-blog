@@ -91,20 +91,3 @@ if (!function_exists('estimateReadingTime')) {
     }
 }
 
-if (!function_exists('storageUrl')) {
-
-    /**
-     * @param      $path
-     * @param null $prefix
-     * @return string
-     */
-    function storageUrl($path, $prefix = null)
-    {
-        $pathPrefix = $prefix ?: trim(config('media.cloud_url_prefix'), '/');
-
-        $path = trim($path, '/');
-
-        return "{$pathPrefix}/{$path}";
-    }
-
-}
