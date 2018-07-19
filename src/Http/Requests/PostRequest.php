@@ -61,7 +61,7 @@ class PostRequest extends FormRequest
 
             return [
                 'featured_image_raw' => ['nullable', (new ValidBase64ImageString())],
-                'featured_image_id'  => 'required|exists:media,id',
+                'featured_image_id'  => 'nullable|required_without:featured_image_raw|exists:media,id',
                 'title'              => 'required|string',
                 'excerpt'            => 'required',
                 'post_type'          => 'required|in:post,page',
@@ -138,11 +138,22 @@ class PostRequest extends FormRequest
         ];
 
         if (is_string($this->featured_image_raw) && !empty(trim($this->featured_image_raw))) {
-            (new PostRepository($post))->updateFeaturedImageOfThePost(
-                $this->featured_image_raw,
-                config('media.image_variations'),
-                true
-            );
+
+            if($post->featuredImage) {
+                (new PostRepository($post))->updateFeaturedImageOfThePost(
+                    $this->featured_image_raw,
+                    config('media.image_variations'),
+                    true
+                );
+            } else {
+                (new PostRepository($post))->saveFeaturedImageOfThePost(
+                    $this->featured_image_raw,
+                    config('media.image_variations'),
+                    true
+                );
+            }
+
+
         }
 
         $this->syncTags($post);

@@ -31,8 +31,12 @@
 								<th scope="row" class="align-middle">{{ $page->id }}</th>
 								<td>
 									<div class="d-f ai-c">
-										<img src="{{ $page->featuredImage->variations['thumbnail']['url'] }}"
-										class="img-thumbnail mr-2" style="width: 60px">
+										
+										@if($page->featuredImage)
+											<img src="{{ storageUrl($page->featuredImage->variations['thumbnail']['path']) }}"
+											     class="img-thumbnail mr-2" style="width: 60px">
+										@endif
+										
 										<a href="{{ route('admin.pages.edit', $page->id) }}">
 											<h3 class="h5 fxg-1">{{ $page->title }}</h3>
 										</a>

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Gurinder\LaravelBlog\Models\Post;
 use Gurinder\LaravelBlog\Repositories\PostRepository;
 use Gurinder\LaravelBlog\Repositories\MediaRepository;
+use Illuminate\Http\UploadedFile;
 
 class PostsContentImagesController extends Controller
 {
