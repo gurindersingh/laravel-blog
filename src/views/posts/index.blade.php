@@ -40,7 +40,7 @@
 								<th scope="row">{{ $post->id }}</th>
 								<td>
 									<div class="d-f ai-fs">
-										<img src="{{ $media->image_social_url }}"
+										<img src="{{ $post->featuredImage->image_social_url }}"
 										class="img-thumbnail mr-2" style="width: 60px">
 										
 										<a href="{{ route('admin.posts.edit', $post->id) }}">

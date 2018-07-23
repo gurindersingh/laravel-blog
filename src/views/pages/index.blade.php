@@ -40,7 +40,7 @@
 									<div class="d-f ai-c">
 										
 										@if($page->featuredImage)
-											<img src="{{ $media->image_social_url }}"
+											<img src="{{ $post->featuredImage->image_social_url }}"
 											     class="img-thumbnail mr-2" style="width: 60px">
 										@endif
 										
