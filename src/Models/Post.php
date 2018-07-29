@@ -21,21 +21,6 @@ class Post extends Model
     protected $with = ['author'];
 
 
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        // static::addGlobalScope('post', function (Builder $builder) {
-        //     $builder->where('post_type', 'post');
-        // });
-    }
-
-
     public function author()
     {
         return $this->belongsTo(config('auth.providers.users.model'), 'author_id', 'id')->select(['id', 'name']);

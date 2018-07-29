@@ -31,6 +31,7 @@ class BlogServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/views' => $this->app->resourcePath('views/vendor/gblog')
         ], 'gblog::views');
+
     }
 
     public function register()

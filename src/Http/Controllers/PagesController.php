@@ -22,7 +22,7 @@ class PagesController extends Controller
 
     public function edit($id)
     {
-        $page = Post::page()->whereId($id)->with(['featuredImage'])->firstOrFail();
+        $page = Post::page()->whereId($id)->with(['featuredImage', 'media'])->firstOrFail();
 
         return view('gblog::pages.edit', compact('page'));
     }

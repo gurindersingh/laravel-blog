@@ -4,6 +4,8 @@ namespace Gurinder\LaravelBlog\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Gurinder\LaravelBlog\Models\Post;
+use Gurinder\LaravelBlog\Models\Media;
+use Gurinder\Storage\Facades\Storage as GurinderStorage;
 use Gurinder\LaravelBlog\Repositories\PostRepository;
 use Gurinder\LaravelBlog\Repositories\MediaRepository;
 use Illuminate\Http\UploadedFile;
@@ -79,13 +81,29 @@ class PostsContentImagesController extends Controller
      */
     public function destroy(Request $request)
     {
-        // DELETION NEED TO DONE BY BACKEND
 
-        // $request->validate(['file' => 'required|string']);
-        //
-        // if ((new MediaRepository())->deleteByVariationPath($request->file)) {
-        //     return response("Media deleted", 202);
-        // }
-        // return response("Error", 500);
+        $media = Media::whereId($request->media_id)->firstOrFail();
+
+        $post = Post::whereId($request->post_id)->with(['featuredImage'])->firstOrFail();
+
+        $isFeaturedImage = $post->featuredImage->id == $media->id;
+
+
+        if($media->mediaable_type == Post::class && $media->mediaable_id == $request->post_id && !$isFeaturedImage) {
+
+            $disk = $media->storage_disk;
+
+            GurinderStorage::removeImages(
+                $disk,
+                collect($media->variations)->pluck('path')->all(),
+                $disk == 'local' ? $media->public : false
+            );
+
+            $media->delete();
+
+            return response("Deleted", 200);
+        }
+
+        abort(403, "Error");
     }
 }

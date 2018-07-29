@@ -30,7 +30,7 @@ class PostsController extends Controller
 
     public function edit(Request $request, $id)
     {
-        $post = Post::post()->whereId($id)->with(['featuredImage', 'category', 'tags'])->firstOrFail();
+        $post = Post::post()->whereId($id)->with(['featuredImage', 'media', 'category', 'tags'])->firstOrFail();
 
         $categories = Category::whereParentId(null)->with('children')->get();
 
