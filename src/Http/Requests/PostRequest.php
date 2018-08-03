@@ -85,6 +85,7 @@ class PostRequest extends FormRequest
      */
     public function persist()
     {
+
         $post = Post::create([
             'title'                 => $this->title,
             'slug'                  => $this->newSlug,
@@ -119,6 +120,7 @@ class PostRequest extends FormRequest
      */
     public function update($id)
     {
+
         $post = Post::whereId($id)->where('author_id', $this->user()->id)->with(['featuredImage'])->firstOrFail();
 
         $data = [

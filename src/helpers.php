@@ -10,37 +10,38 @@ if (!function_exists('validateBase64ImageString')) {
      * @param array $validMimeTypes
      * @return boolean
      */
-    function validateBase64ImageString($string, $maxSizeInMB = 3, $validMimeTypes = ['image/jpg', 'image/png', 'image/jpeg', 'image/gif'])
+    function validateBase64ImageString($string, $maxSizeInKB = 3, $validMimeTypes = ['image/jpg', 'image/png', 'image/jpeg', 'image/gif'])
     {
-        try {
 
-            $base64string = base64_decode(explode(";base64,", $string)[1]);
+        $base64string = base64_decode(explode(";base64,", $string)[1]);
 
-            $info = getimagesizefromstring($base64string);
+        $info = getimagesizefromstring($base64string);
 
-            unset($string);
+        unset($string);
 
-            if (!$info || ($info[0] <= 0) || ($info[1] <= 0)) return false;
+        if (!$info || ($info[0] <= 0) || ($info[1] <= 0)) return false;
 
-            if (is_array($validMimeTypes) && !empty($validMimeTypes)) {
-                if (!in_array($info['mime'], $validMimeTypes)) return false;
-            }
-
-            $sizeInKB = (strlen($base64string) - substr_count(substr($base64string, -2), '=')) / 1024;
-
-            $sizeInMB = $sizeInKB / 1024;
-
-            if ($maxSizeInMB && ($sizeInMB > $maxSizeInMB)) return false;
-
-            unset($base64string);
-
-            return true;
-
-        } catch (\Exception $exception) {
-
-            return false;
-
+        if (is_array($validMimeTypes) && !empty($validMimeTypes)) {
+            if (!in_array($info['mime'], $validMimeTypes)) return false;
         }
+
+        $sizeInKB = (strlen($base64string) - substr_count(substr($base64string, -2), '=')) / 1024;
+
+        if ($sizeInKB > $maxSizeInKB) return false;
+
+        unset($base64string);
+
+        return false;
+
+        // try {
+        //
+        //
+        //
+        // } catch (\Exception $exception) {
+        //
+        //     return false;
+        //
+        // }
     }
 }
 
