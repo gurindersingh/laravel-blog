@@ -22,7 +22,7 @@ class PostsController extends Controller
             $posts = Post::where('id', 'like', "%{$request->search}%")->orWhere('title', 'like', "%{$request->search}%")->post();
         }
 
-        $posts = $posts->with(['featuredImage', 'category', 'tags', 'author'])->paginate($request->perPage ?: 20s);
+        $posts = $posts->with(['featuredImage', 'category', 'tags', 'author'])->paginate($request->perPage ?: 20);
 
         return view('gblog::posts.index', compact('posts', 'searchingFor'));
     }
