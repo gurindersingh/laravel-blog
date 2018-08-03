@@ -3,15 +3,25 @@
 namespace Gurinder\LaravelBlog\Http\Controllers;
 
 use Gurinder\LaravelBlog\Models\Post;
+use Illuminate\Http\Request;
+use TomLingham\Searchy\Facades\Searchy;
 
 class PagesController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $pages = Post::page()->with(['featuredImage', 'author'])->paginate(20);
+        $searchingFor = $request->search ? "Showing results for <strong>{$request->search}</strong>" : null;
 
-        return view('gblog::pages.index', compact('pages'));
+        $pages = Post::page();
+
+        if ($request->search) {
+            $pages = Post::where('id', 'like', "%{$request->search}%")->orWhere('title', 'like', "%{$request->search}%")->page();
+        }
+
+        $pages = $pages->with(['featuredImage', 'author'])->paginate($request->perPage ?: 20);
+
+        return view('gblog::pages.index', compact('pages', 'searchingFor'));
     }
 
     public function create()

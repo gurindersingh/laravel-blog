@@ -49,14 +49,14 @@ class Post extends Model
         return $this->morphMany(Media::class, 'mediaable');
     }
 
-    public function scopePage($query)
-    {
-        return $query->where('post_type', 'page');
-    }
-
     public function scopeOfUser($query, $userId)
     {
         return $query->whereAuthorId($userId);
+    }
+
+    public function scopePage($query)
+    {
+        return $query->where('post_type', 'page');
     }
 
     public function scopePost($query)

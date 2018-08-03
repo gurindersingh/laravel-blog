@@ -7,15 +7,24 @@ use Gurinder\LaravelBlog\Models\Tag;
 use Gurinder\LaravelBlog\Models\Post;
 use Gurinder\LaravelBlog\Models\Category;
 use Gurinder\LaravelBlog\Http\Requests\PostRequest;
+use TomLingham\Searchy\Facades\Searchy;
 
 class PostsController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::post()->with(['featuredImage', 'category', 'tags', 'author'])->paginate(20);
+        $searchingFor = $request->search ? "Showing results for <strong>{$request->search}</strong>" : null;
 
-        return view('gblog::posts.index', compact('posts'));
+        $posts = Post::post();
+
+        if ($request->search) {
+            $posts = Post::where('id', 'like', "%{$request->search}%")->orWhere('title', 'like', "%{$request->search}%")->post();
+        }
+
+        $posts = $posts->with(['featuredImage', 'category', 'tags', 'author'])->paginate($request->perPage ?: 20s);
+
+        return view('gblog::posts.index', compact('posts', 'searchingFor'));
     }
 
     public function create()

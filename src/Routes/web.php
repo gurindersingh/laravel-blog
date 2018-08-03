@@ -11,7 +11,10 @@ Route::middleware(['web', 'auth'])
         Route::get('/posts/create', 'PostsController@create')->name('posts.create');
         Route::resource('/taxonomies', 'TaxonomiesController');
         Route::resource('/posts', 'PostsController');
+        Route::post('/posts', 'PostsController@index')->name('posts.search');
+
         Route::resource('/pages', 'PagesController')->only(['index', 'create', 'edit']);
+        Route::post('/pages', 'PagesController@index')->name('pages.search');
 
         Route::resource('/tags', 'TagsController')->only(['index', 'store', 'destroy']);
 

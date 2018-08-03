@@ -15,13 +15,32 @@
 		<div class="row mt-5 mb-10 pb-10">
 			
 			<div class="col-lg-12 mb-4">
-				<div class="btn-group" role="group" aria-label="Basic example">
-					<a href="{{ route('admin.dashbaord') }}" class="btn py-1 px-2 label btn-outline-primary">Dashboard</a>
-					<a href="{{ route('admin.pages.create') }}" class="btn py-1 px-2 label btn-outline-primary">Add Page</a>
+				<div class="d-f jc-sb">
+					<div class="">
+						<div class="btn-group" role="group" aria-label="Basic example">
+							<a href="{{ route('admin.dashbaord') }}" class="btn py-1 px-2 label btn-outline-primary hv:c-white fc:c-white">Dashboard</a>
+							<a href="{{ route('admin.pages.create') }}" class="btn py-1 px-2 label btn-outline-primary hv:c-white fc:c-white">Add Page</a>
+							
+							@if($searchingFor)
+								<a href="{{ route('admin.pages.index') }}" class="btn py-1 px-2 label btn-outline-primary hv:c-white fc:c-white">All pages</a>
+							@endif
+							
+						</div>
+					</div>
+					<form action="{{ route('admin.pages.search') }}" method="POST">
+						{{ csrf_field() }}
+						<div class="d-f">
+							<input name="search" type="search" class="form-control form-control-sm" placeholder="Search...">
+							<button class="btn btn-primary btn-sm ml-2 c-white tt-u">Search</button>
+						</div>
+					</form>
 				</div>
 			</div>
 			
 			<div class="col-lg-12">
+				@if($searchingFor)
+					<p class="mb-1">{!! $searchingFor !!}</p>
+				@endif
 				<div class="table-responsive bgc-white">
 					<table class="table table-bordered mb-0">
 						<thead>
@@ -64,7 +83,7 @@
 				</div>
 			</div>
 			
-			<div class="col-lg-12">
+			<div class="col-lg-12 mt-5">
 				{{ $pages->links() }}
 			</div>
 		
