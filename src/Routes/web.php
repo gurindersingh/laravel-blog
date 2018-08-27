@@ -1,7 +1,7 @@
 <?php
 
 Route::middleware(['web', 'auth'])
-    ->prefix('/backend/')
+    ->prefix('backend')
     ->as('admin.')
     ->namespace('Gurinder\LaravelBlog\Http\Controllers')
     ->group(function () {

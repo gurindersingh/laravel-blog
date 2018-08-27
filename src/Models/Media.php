@@ -27,7 +27,8 @@ class Media extends Model
      */
     protected $casts = [
         'variations' => 'array',
-        'properties' => 'array'
+        'properties' => 'array',
+        'public'     => 'boolean'
     ];
 
     protected $appends = [

@@ -86,6 +86,8 @@ class PostRequest extends FormRequest
     public function persist()
     {
 
+        dd("sdkvs");
+
         $post = Post::create([
             'title'                 => $this->title,
             'slug'                  => $this->newSlug,

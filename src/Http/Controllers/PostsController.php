@@ -60,18 +60,21 @@ class PostsController extends Controller
     {
         $post = Post::whereId($id)->with(['featuredImage', 'media'])->firstOrFail();
 
+        $post->delete();
+
         if ($post->author_id == auth()->id()) {
 
-            $post->delete();
+            $post->media->each(function ($media) {
 
-            $disk = \Storage::disk(config('media.disk'));
+                $removeFromLocalPublic = ($media->storage_disk == 'local') && $media->public;
 
-            $post->media->each(function ($item, $key) use ($disk) {
-                if ($item->delete()) {
-                    foreach ($item->variations as $variation) {
-                        $disk->delete($variation['path']);
-                    }
-                }
+                GurinderStorage::removeImages(
+                    $media->storage_disk,
+                    collect($media->variations)->pluck('path')->all(),
+                    $removeFromLocalPublic
+                );
+
+                $media->delete();
             });
 
             return response("Done", 202);
@@ -79,6 +82,8 @@ class PostsController extends Controller
         }
 
         abort(403, "No permission");
+
+    
     }
 
 }
